@@ -2,16 +2,29 @@
 
 include 'Rooster.php';
 
-if (isset($_GET['student'], $_GET['class'], $_GET['school']))
+$leerlingen = include("Leerlingen.php");
+
+if (isset($_GET['student'], $_GET['school']))
 {
-	if (is_int($_GET['student']) && is_int($_GET['school']))
+	$student = (int) $_GET['student'];
+	$school = (int) $_GET['school'];
 	{
-		$rooster = new Rooster($_GET['student'], $_GET['class'], $_GET['school']);
-		$table = $rooster->getVertTable();
+		$temp = array();
+		foreach ($leerlingen as $klasnaam => $klas)
+		{
+			if (in_array($student, array_keys($klas)))
+			{
+				$klasnummer = $klasnaam;
+				$klasnummer = preg_replace("/[a-z]$/i", "", $klasnummer);
+
+				$rooster = new Rooster($student, $klasnummer, $school);
+				$table = $rooster->getVertTable();
+				break;
+			}
+		}
+
 	}
 }
-
-if (!isset($rooster)) $leerlingen = include("Leerlingen.php");
 
 
 ?>
@@ -69,6 +82,12 @@ if (!isset($rooster)) $leerlingen = include("Leerlingen.php");
 				</optgroup>
 			<?php endforeach; ?>
 		</select></div>
+		<div class="field">
+			<select name="school">
+				<option value="962">Zernike College</option>
+			</select>
+		</div>
+
 		<div class="field"><input type="submit"></div>
 	</form>
 
